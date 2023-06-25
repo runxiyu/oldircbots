@@ -1,0 +1,6 @@
+- Track MODE.
+- Track QUIT.
+- Ask ChanServ for operator status when needed.
+  A bit hard considering the current structure of the program? Probably add state handlers or whatever.
+- Summon the GNU.
+- Reload configuration on-the-fly.

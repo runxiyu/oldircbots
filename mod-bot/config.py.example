@@ -1,0 +1,15 @@
+from __future__ import annotations
+from typing import Optional
+
+SERVER: str = "irc.example.org"
+PORT: int = 6667
+NICK: bytes = b"nickname"
+IDENT: bytes = b"ident"
+GECOS: bytes = b"realname"
+CHANNELS: list[bytes] = [b"#channel"]
+ADMINS: list[bytes] = [b"*!good-person@exampke.org"]
+PREFIX: bytes = b"^"
+
+# If either LOGIN or PASSWORD is set to None, SASL PLAIN is disabled
+LOGIN: Optional[bytes] = b"username"
+PASSWORD: Optional[bytes] = b"password"

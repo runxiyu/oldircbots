@@ -1,0 +1,229 @@
+#!/usr/bin/python3
+
+"""
+Simple python IRC bot to interject on bad vocabulary.  Might provide
+simple channel management in the future.
+
+In the free software community, reminding people of forgotten but
+fundemental philosophies is important.
+
+The original base of this program is available at
+https://github.com/luk3yx/stdinbot, under the Expat license.  However,
+more than 95% has been written differently.  All changes are under
+the following waiver:
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+"""
+
+import miniirc, sys
+from miniirc import *
+from miniirc_extras import *
+
+assert miniirc.ver >= (1, 4, 0), "This bot requires miniirc >= v1.4.0."
+
+# Variables
+nick = "dhparams"
+ident = nick
+realname = "DefinitelyNotDiffieHellmanBot"
+identity = None
+# identity = '<username> <password>'
+debug = True
+channels = ["##gnuhackers", "#botwar", "#librespeech"]
+owner = "Andrew/AndrewYu <andrew@andrewyu.org>"
+
+why = {}
+for c in channels:
+    why[c] = owner
+
+ip = "irc.libera.chat"
+port = 6697
+
+# Welcome!
+print("Welcome to {}!".format(nick), file=sys.stderr)
+irc = IRC(
+    ip,
+    port,
+    nick,
+    channels,
+    ident=ident,
+    realname=realname,
+    ns_identity=identity,
+    debug=debug,
+    auto_connect=False,
+)
+
+
+@irc.Handler("KICK", colon=False)
+def handle_kick(irc, hostmask, args):
+    channel = args[0]
+    if args[1] == irc.current_nick:
+        irc.send("JOIN", channel)
+        irc.msg(
+            channel,
+            f"{hostmask[0]}: If you want me to leave, use #part instead of kicking me.  Otherwise I'd summon an army of GNUs.",
+        )
+
+
+@irc.Handler("PRIVMSG", colon=False)
+def handle_privmsg(irc, hostmask, args):
+    channel = args[0]
+    if channel.startswith("#"):
+        ops = irc.chans[channel].modes.getset("o")
+        c = True
+
+    text = args[-1]
+    words = args[-1].split(" ")
+    t = text.lower()
+    w = [x.lower() for x in words]
+    print(channel, text, words)
+    if "linux kernel" in t:
+        irc.msg(
+            channel,
+            """Linux is a kernel and is only a kernel as of now, so don't say "Linux kernel", just say "Linux".  It sounds like if Linux is a full OS and you're saying it contains a kernel.""",
+        )
+    if (
+        "i use linux as my operating system" in t
+        or "i use linux as my os" in t
+        or "linux is my os" in t
+        or "i run linux" in t
+        or "use linux instead" in t
+        or "switch to linux" in t
+    ) and "kernel" not in t:
+        irc.msg(channel, """If you call our operating system “Linux”, that conveys a mistaken idea of the system’s origin, history, and purpose. If you call it “GNU/Linux,” that conveys (though not in detail) an accurate idea.""")
+        irc.msg(channel, """But does this matter? Is it important whether people know the system’s origin, history, and purpose? Yes, because people who forget history are often condemned to repeat it. The Free World that has developed around GNU/Linux is not secure; the problems that led us to develop GNU are not completely eradicated, and they threaten to come back. When I explain why it’s appropriate to call the operating system “GNU/Linux” rather than “Linux,”""")
+        irc.msg(channel, """people sometimes respond this way:""")
+        irc.msg(channel, '''"Granted that the GNU Project deserves credit for this work, is it really worth a fuss when people don’t give credit? Isn’t the important thing that the job was done, not who did it? You ought to relax, take pride in the job well done, and not worry about the credit."''')
+        irc.msg(channel, """This would be wise advice, if only the situation were like that—if the job were done and it were time to relax. If only that were true! But challenges abound, and this is no time to take the future for granted. Our community’s strength rests on commitment to freedom and cooperation. Using the name GNU/Linux is a way for people to remind themselves and inform others of these goals.""")
+        irc.msg(channel, """People who know they are using a system that came out of the GNU Project can see a direct relationship between themselves and GNU. They won’t automatically agree with our philosophy, but at least they will see a reason to think seriously about it. In contrast, people who consider themselves “Linux users,” and believe that the GNU Project “developed tools which proved to be useful in Linux,”""")
+        irc.msg(channel, """typically perceive only an indirect relationship between GNU and themselves. They may just ignore the GNU philosophy when they come across it.""")
+        irc.msg(channel, """The GNU Project is idealistic, and anyone encouraging idealism today faces a great obstacle: the prevailing ideology encourages people to dismiss idealism as “impractical.” Our idealism has been extremely practical: it is the reason we have a free GNU/Linux operating system. People who love this system ought to know that it is our idealism made real.""")
+        irc.msg(channel, """If “the job” really were done, if there were nothing at stake except credit, perhaps it would be wiser to let the matter drop. But we are not in that position. To inspire people to do the work that needs to be done, we need to be recognized for what we have already done. Please help us, by calling the operating system GNU/Linux. """)
+    if "i use gnu/linux" in t:
+        irc.msg(channel, """Me too!""")
+    if (
+        (
+            "like open source" in t
+            or "love open source" in t
+            or "like open-source" in t
+            or "love open-source" in t
+            or "open-source!" in t
+            or "open source!" in t
+            or "is open source" in t
+            or "is open-source" in t
+        )
+        and "free" not in t
+        and "libre" not in t
+        and "gnu" not in t
+        and "fsf" not in t
+        and "stallman" not in t
+        and "rms" not in t
+    ):
+        irc.msg(
+            channel,
+            """"Open Source" misses the point!  See https://www.gnu.org/philosophy/open-source-misses-the-point.en.html.""",
+        )
+    if "ethernet cable" in t:
+        irc.msg(
+            channel,
+            """Ethernet is a protocol, not something physical.  Say "RJ45 cable".""",
+        )
+    if "fuck" in t:
+        irc.msg(
+            channel,
+            "swore",
+        )
+    if ",open source" in t or ",opensource" in t or ",open-source" in t:
+        irc.msg(
+            channel,
+            """"Open Source" misses the point!  See https://www.gnu.org/philosophy/open-source-misses-the-point.en.html.""",
+        )
+    if ",guix" in t:
+        irc.msg(
+            channel,
+            """GNU Guix is the advanced distribution of GNU.  See https://guix.gnu.org.""",
+        )
+    if ",fsw" in t or ",free software" in t:
+        irc.msg(
+            channel,
+            """Free software means that the users have the freedom to run, edit, contribute to, and share the software. Thus, free software is a matter of liberty, not price. We have been defending the rights of all software users for the past 35 years.""",
+        )
+    if ",fcm" in t:
+        irc.msg(
+            channel,
+            """The Free Computing Movement is meant to be an extension of the Free Software Movement to everywhere in computing, not just in software.  See https://fcm.andrewyu.org.""",
+        )
+    if ",andrew" in t:
+        irc.msg(
+            channel,
+            """Andrew is a random guy.  Per Website is https://www.andrewyu.org, email andrew@andrewyu.org.  Perse owns me and loves free software.""",
+        )
+    if ",MrArthegor" in t:
+        irc.msg(
+            channel,
+            """MrArthegor is nobody at all!""",
+        )
+    if ",test_user" in t:
+        irc.msg(
+            channel,
+            """Test_User is a professional haxxor from worldwide haxing industries.""",
+        )
+    if irc.current_nick in w[0]:
+        if "are" in t and "you" in t and "bot" in t:
+            irc.msg(
+                    channel,
+                    f"""Yes, I am a robot.  Say {irc.current_nick}: help  for more information.""",
+                    )
+        else:
+            try:
+                irc.msg(
+                    channel,
+                    f"""Hi!  I'm a DefinitelyNotDiffieHellman bot.  I think {why[channel]} brought me here.  I remind people of forgotten but fundemental philosophies in free software and society, along with basic factoids.  My source code is at https://git.andrewyu.org/ircbots/.  Say "#part" to make me leave.  The documentation is in the source code.""",
+                )
+            except KeyError:
+                irc.msg(
+                    channel,
+                    f"""Hi!  I'm a DefinitelyNotDiffieHellman bot.  I forgot who brought me here though.  My owner is {owner}.  I remind people of forgotten but fundemental philosophies in free software and society, along with basic factoids.  My source code is at https://git.andrewyu.org/ircbots/.  Say "#part" to make me leave.  The documentation is in the source code.""",
+                )
+    elif "#join" == w[0]:
+        irc.send("JOIN", words[1])
+        why[words[1]] = hostmask[0]
+        print(hostmask[0], words[1])
+    elif "#part" == w[0]:
+        if not c:
+            irc.msg(channel, "You must say this in the channel you want me to part.")
+        elif hostmask[0] not in ops:
+            irc.msg(channel, f"{hostmask[0]}, op yourself to do that.")
+        elif len(w) <= 1:
+            irc.send("PART", channel, f"Requested by {hostmask[0]}")
+        else:
+            irc.send("PART", w[1], f"Requested by {hostmask[0]}: {' '.join(w[2:])}")
+
+
+# Connect
+if __name__ == "__main__":
+    irc.require("users")
+    irc.require("chans")
+    irc.connect()
