@@ -1,8 +1,9 @@
 #!/usr/bin/env pythn3
 #
 # Single-connection IRC bot.
-# Copyright (C) 2022  Andrew Yu <https://www.andrewyu.org/>
-# Copyright (C) 2022  luk3yx <https://luk3yx.github.io/>
+# Copyright (C) 2023       uhax
+# Copyright (C) 2022-2023  Andrew Yu <https://www.andrewyu.org/>
+# Copyright (C) 2022       luk3yx <https://luk3yx.github.io/>
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Affero General Public License as published by the Free
@@ -26,6 +27,9 @@
 #    Copyright (c) 2022  Andrew Yu <https://www.andrewyu.org/>
 #    Copyright (c) 2002-2009  Jeremiah Fincher and others
 #
+#
+# Random programming notes:
+# Could add a callback system or a global delayed execution system somewhere
 
 
 from __future__ import annotations
@@ -445,6 +449,11 @@ def handle_cap(
                     )
                 if b"PLAIN" in cap_arg.split(b","):
                     send(s, b"CAP", b"REQ", b"sasl")
+                else:
+                    raise Exception("Server does not support any SASL methods that I have implemented")
+            else:
+                send(s, b"CAP", b"END")
+                break # since we don't handle any capabilities other than SASL, we can just stop here...
 
     if msg.args[1] == b"ACK":
         if msg.args[2] == b"sasl":
@@ -559,7 +568,13 @@ def handle_privmsg(
         else:
             try:
                 kickban_target = users[kickban_string.lower()]
-                assert kickban_target.nick and kickban_target.ident and kickban_target.host
+                if not kickban_target.nick and kickban_target.ident and kickban_target.host:
+                    send(s, "WHOIS", kickban_string)
+                reply(s, msg, b"Sorry, I don't know this user. Maybe try again?") # too lazy to get delay execution done right now
+                # save the stack, perform another cycle of handling the new WHOIS information, and use this as a restart point
+                # I miss Scheme
+                # I can't handle the missing information here
+                # TODO
                 kickban_mask = b"*!%s@%s" % (kickban_target.ident if (not kickban_target.ident.startswith(b"~")) else b"*", kickban_target.host)
                 n = ban_mask(s, channel, kickban_mask, protect=[me, msg.source])
                 if n is None:
@@ -707,11 +722,11 @@ def handle_incoming_line(
     parsed: tuple[
         bytes, tuple[Optional[bytes], Optional[bytes], Optional[bytes]], list[bytes]
     ] = parse_message(m)
-    source: Optional[User]
+    source: Optional[User] # wow, random type declaration sticking out of nowhere, great Python style
     try:
         source = users[parsed[1][0].lower()] if parsed[1][0] else None
     except KeyError:
-        assert parsed[1][0]
+        assert parsed[1][0] # why are we asserting this again, what if it's some server that's snoting it
         source = User(nick=parsed[1][0])
         users[parsed[1][0].lower()] = source
 
@@ -746,12 +761,12 @@ def main() -> None:
     #         "[-] Login and password must be both set to authenticate", file=sys.stderr
     #     )
     #     sys.exit(2)
-
     send(s, b"NICK", NICK)
     send(s, b"USER", IDENT, b"0", b"0", GECOS)
 
     recv_msg: bytes = b""
     while True:
+
         new_recv_msg: bytes = s.recv(512)
         if new_recv_msg == b"":
             sys.exit(0)
