@@ -572,8 +572,8 @@ def handle_privmsg(
         else:
             try:
                 kickban_target = users[kickban_string.lower()]
-                if not kickban_target.nick and kickban_target.ident and kickban_target.host:
-                    send(s, "WHOIS", kickban_string)
+                if not (kickban_target.nick and kickban_target.ident and kickban_target.host):
+                    send(s, b"WHOIS", kickban_string)
                     reply(s, msg, b"Sorry, I don't know this user. Maybe try again?") # too lazy to get delay execution done right now
                     return
                 # save the stack, perform another cycle of handling the new WHOIS information, and use this as a restart point
