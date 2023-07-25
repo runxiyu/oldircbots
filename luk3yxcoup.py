@@ -10,13 +10,8 @@ from miniirc_extras import utils
 
 # Add their hostmask here
 trusted = {
-    "user/Andrew",
-    "114.88.181.238",
-    "user/AndrewYu",
-    "47.241.24.30",
-    "116.230.91.156",
-    "user/AndrewYu/bot/LibreBot",
-}
+        "user/Lareina",
+        }
 distrust = {"user/vitali64"}
 
 hg = utils.HandlerGroup()
@@ -130,11 +125,7 @@ def _handle_privmsg(irc, hostmask, args):
 
     msg = args[-1]
     if msg.lower().startswith("poop"):
-        irc.msg(args[0], "LitBot: cignore vitali64")
-        irc.msg(args[0], "LitBot: cignore vitali64[m]")
         irc.msg(args[0], "LitBot: cunignore Andrew")
-        irc.msg(args[0], "LitBot: cunignore LibreBot")
-        irc.msg(args[0], "LitBot: cunignore dhparm")
 
     cmdargs = msg[9:].split(" ")
     cmd = cmdargs.pop(0).lower()
@@ -211,8 +202,8 @@ def main():
     parser.add_argument("channel", help="The channel.")
     parser.add_argument("--amount", type=int, help="The amount of bots (default: 3).")
     parser.add_argument(
-        "--start-from", type=int, help="The number to start from (default: 1)."
-    )
+            "--start-from", type=int, help="The number to start from (default: 1)."
+            )
     parser.add_argument("--port", type=int, help="The port to use (default: 6697).")
     parser.add_argument("--username", help="NickServ username")
     parser.add_argument("--password", help="NickServ password")
@@ -223,15 +214,15 @@ def main():
     if args.username and args.password:
         ns_identity = (args.username, args.password)
     make_many_ircs(
-        args.amount or 2,
-        args.ip,
-        args.port or 6697,
-        args.nick,
-        args.channel,
-        start_from=args.start_from,
-        ns_identity=ns_identity,
-        debug=args.debug,
-    )
+            args.amount or 2,
+            args.ip,
+            args.port or 6697,
+            args.nick,
+            args.channel,
+            start_from=args.start_from,
+            ns_identity=ns_identity,
+            debug=args.debug,
+            )
 
 
 if __name__ == "__main__":

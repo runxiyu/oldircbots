@@ -7,7 +7,7 @@ import ssl
 
 names = []
 
-trusted = [b"Andrew", b"LibreBot"]
+trusted = [b"Andrew", b"Noisytoot"]
 
 channel = b"#librespeech"
 
@@ -36,7 +36,7 @@ def run(name):
     s.connect(("irc.libera.chat", 6697))
 
     s.sendall(
-        b"USER SusImpostor SusImpostor SusImpostor :SusImpostor\r\nNICK "
+        b"USER librespeech librespeech librespeech :librespeech\r\nNICK "
         + name
         + b"\r\n"
     )
@@ -244,9 +244,9 @@ def run(name):
 
 
 for i in range(0, 3):
-    print("Starting Blah" + str(i) + "...")
+    print("Starting librespeech" + str(i) + "...")
     threading.Thread(
-        target=init, args=(b"SusImpostor" + str(i).encode("UTF-8"),)
+        target=init, args=(b"librespeech" + str(i).encode("UTF-8"),)
     ).start()
     time.sleep(3)
 
