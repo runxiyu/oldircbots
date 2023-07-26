@@ -111,30 +111,32 @@ def yay(irc, hostmask, args):
                 time.sleep(60)
                 irc.send("MODE", channel, "-q", "$a:%s" % haxxorname)
                 return
-    if hostmask[0] in owner and args[-1] == f"{irc.current_nick}: quit":
-        exit(0)
-    elif hostmask[0] in owner and args[-1] == f"{irc.current_nick}: off":
-        defcon[0] = 0
-        irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
-        irc.msg(channel, f"{hostmask[0]}: defcon 0 set: relax")
-    elif hostmask[0] in owner and args[-1] == f"{irc.current_nick}: noop":
-        defcon[0] = 1
-        irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
-        irc.msg(channel, f"{hostmask[0]}: defcon 1 set: deny channel operator privileges")
-    elif hostmask[0] in owner and args[-1] == f"{irc.current_nick}: censor":
-        defcon[0] = 2
-        irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
-        irc.msg(channel, f"{hostmask[0]}: defcon 2 set: temporary quiet on badwords")
-    elif hostmask[0] in owner and args[-1] == f"{irc.current_nick}: quiet":
-        defcon[0] = 3
-        irc.send("MODE", channel, "-b+q", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
-        irc.msg(channel, f"{hostmask[0]}: defcon 3 set: quiet")
-    elif hostmask[0] in owner and args[-1] == f"{irc.current_nick}: ban":
-        defcon[0] = 4
-        irc.send("MODE", channel, "+bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
-        irc.msg(channel, f"{hostmask[0]}: defcon 4 set: automatic kickban")
-    elif hostmask[0] in owner and args[-1].startswith(f"{irc.current_nick}:"):
-        irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban)")
+    elif hostmask[0] in owner and args[-1].startswith(f"{irc.current_nick}: "):
+        lat = args[-1].split(" ")[1:]
+        if lat[0] == f"quit":
+            exit(0)
+        elif lat[0] == f"off":
+            defcon[0] = 0
+            irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
+            irc.msg(channel, f"{hostmask[0]}: defcon 0 set: relax")
+        elif lat[0] == f"noop":
+            defcon[0] = 1
+            irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
+            irc.msg(channel, f"{hostmask[0]}: defcon 1 set: deny channel operator privileges")
+        elif lat[0] == f"censor":
+            defcon[0] = 2
+            irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
+            irc.msg(channel, f"{hostmask[0]}: defcon 2 set: temporary quiet on badwords")
+        elif lat[0] == f"quiet":
+            defcon[0] = 3
+            irc.send("MODE", channel, "-b+q", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
+            irc.msg(channel, f"{hostmask[0]}: defcon 3 set: quiet")
+        elif lat[0] == f"ban":
+            defcon[0] = 4
+            irc.send("MODE", channel, "+bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
+            irc.msg(channel, f"{hostmask[0]}: defcon 4 set: automatic kickban")
+        else:
+            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban)")
     elif args[-1].startswith(f"{irc.current_nick}:") and hostmask[0] == haxxorname:
         irc.msg(channel, f"{hostmask[0]}: lmao u serious?")
     elif args[-1].startswith(f"{irc.current_nick}:"):
