@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+
 """
 Anyone is free to copy, modify, publish, use, compile, sell, or
 distribute this software, either in source code form or as a compiled
@@ -15,7 +16,10 @@ AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 """
 
-import miniirc, sys
+import sys
+print("warning: this is a joke. there are many vulnerabilities (account name != nickname, self-deop, etc).", file=sys.stderr)
+
+import miniirc
 import time
 from miniirc import *
 from miniirc_extras import *
