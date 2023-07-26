@@ -11,20 +11,11 @@ from miniirc_extras import utils
 
 # Add their hostmask here
 trusted = {
-    "user/luk3yx/bot/lurk",
-    "user/luk3yx",
-    "LibreIRC/staff/Andrew",
-    "services.irc.andrewyu.org",
     "andrewyu.org",
-    "user/labrador",
     "services.libera.chat",
-    "user/AndrewYu",
-    "user/AndrewYu/bot/LibreBot",
-    "xIRC/guest/2s1.ocj.4nc5dk.IP",
-    "116.230.91.215",
-    "47.241.24.30",
+    "user/Lareina",
 }
-banned = {"114.88.181.238"}
+banned = {"fases/developer/funderscore"}
 
 trusted = set([i.lower() for i in trusted])
 banned = set([i.lower() for i in banned])
@@ -42,7 +33,7 @@ def _handle_join(irc, hostmask, args):
         except KeyError:
             return
         if irc.current_nick not in chan.modes.getset("o"):
-            irc.msg("LibreBot", "OP", chan.name)
+            irc.msg("ChanServ", "OP", chan.name)
     elif hostmask[2].lower() in trusted:
         # Give ops ops if possible
         try:
@@ -55,7 +46,7 @@ def _handle_join(irc, hostmask, args):
             else:
                 irc.msg(
                     chan.name,
-                    "Welcome back, " + hostmask[0] + "!  Glad to see you again!",
+                    "Hi " + hostmask[0]
                 )
     elif hostmask[2] in banned:
         # lets kickban them
@@ -185,14 +176,23 @@ def _handle_kick(irc, hostmask, args):
         irc.msg("LibreBot", "OP " + args[0] + " " + irc.current_nick)
         irc.msg(
             args[0],
-            f"Hey {' '.join(irc.chans[args[0]].modes.getset('o'))}, {hostmask[0]} yaykicked me!",
+            hostmask[0]+ f": HOW DARE YOU",
         )
-        ops = irc.chans[args[0]].modes.getset("o")
-        print("@@@", ops)
-        for op in ops:
-            if op == irc.current_nick:
-                continue
-            irc.send("MODE", args[0], "-o", op)
+        irc.send("MODE", args[0], "-o", hostmask[0])
+        irc.send("MODE", args[0], "+b", "*!*@" + hostmask[2])
+        irc.send(
+            "KICK",
+            args[0],
+            hostmask[0],
+            "Eat jet engines!"
+        )
+        # ops = irc.chans[args[0]].modes.getset("o")
+
+#         print("@@@", ops)
+#         for op in ops:
+#             if op == irc.current_nick:
+#                 continue
+#             irc.send("MODE", args[0], "-o", op)
 
         return
     user = irc.users[args[1]]
@@ -289,7 +289,7 @@ def _handle_privmsg(irc, hostmask, args):
         except KeyError:
             irc.msg(
                 args[0],
-                "I don't know who that is, maybe let perse message me?  Or is this a permban in the database?",
+                "I don't know who that is, maybe let them message me?  Or is this a permban in the database?",
             )
     else:
         irc.msg(args[0], f"Invalid command: {cmd}.")

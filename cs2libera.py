@@ -1,15 +1,15 @@
 ip = "irc.libera.chat"
 port = 6697
-nick = "ChanGuard"
+nick = "Elestren"
 ident = nick
 realname = "git://git.andrewyu.org/ircbots"
-identity = open("idents").read()
+identity = "Elestren Ww7Ot9uqpSVuOHPNJ12zHsjoAy7P5ReXpUyL7TyRypkN31l38FjsLob0rLb9J3o8"
 debug = True
-channels = ["#librespeech", "##libresociety", "#fsi"]
+channels = ["#librespeech"]
 prefix = "?"
 chandata = {
     "#librespeech": {
-        "werdnA!andrew@andrewyu.org": {
+        "Lareina!andrew@user/Lareina": {
             "ban",
             "op",
             "autoop",
@@ -19,50 +19,6 @@ chandata = {
             "exempt",
             "quiet",
         },
-        "Andrew!Andrew@user/AndrewYu": {
-            "ban",
-            "op",
-            "autoop",
-            "flags",
-            "invite",
-            "voice",
-            "exempt",
-            "quiet",
-        },
-        "leah!~leah@libreboot/developer/leah": {
-            "ban",
-            "op",
-            "autoop",
-            "flags",
-            "invite",
-            "voice",
-            "exempt",
-            "quiet",
-        },
-    },
-    "#fsi": {
-        "Andrew!Andrew@user/AndrewYu": {
-            "ban",
-            "op",
-            "autoop",
-            "flags",
-            "invite",
-            "voice",
-            "exempt",
-            "quiet",
-        }
-    },
-    "##libresociety": {
-        "Andrew!Andrew@user/AndrewYu": {
-            "ban",
-            "op",
-            "autoop",
-            "flags",
-            "invite",
-            "voice",
-            "exempt",
-            "quiet",
-        }
     },
 }
-chaneww = {"#librespeech": {}, "#fsi": {}, "##libresociety": {}}
+chaneww = {"#librespeech": {}}

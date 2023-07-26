@@ -9,16 +9,10 @@ from miniirc_extras import utils
 
 # Add their hostmask here
 trusted = {
-    "LibreIRC/staff/Andrew",
-    "services.irc.andrewyu.org",
     "andrewyu.org",
-    "user/labrador",
-    "services.libera.chat",
-    "user/AndrewYu",
-    "user/AndrewYu/bot/LibreBot",
-    "xIRC/guest/2s1.ocj.4nc5dk.IP",
+    "user/Lareina",
 }
-banned = {"114.88.181.238"}
+banned = {"fases/developer/funderscore"}
 
 trusted = set([i.lower() for i in trusted])
 banned = set([i.lower() for i in banned])
@@ -44,7 +38,7 @@ def _handle_join(irc, hostmask, args):
         except KeyError:
             return
         if irc.current_nick not in chan.modes.getset("o"):
-            irc.msg("LibreBot", "OP", chan.name)
+            irc.msg("ChanServ", "OP", chan.name)
     else:
         irc.send("KICK", args[0], hostmask[0], "Channel is locked")
 
