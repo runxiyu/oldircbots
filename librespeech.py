@@ -36,6 +36,7 @@ debug = True
 channels = ["#librespeech"]
 owner = ["Lareina", "f_", "leah", "Noisytoot", "Cindy", "ggoes"]
 defcon = [0]
+ducks = [False]
 
 raiding = [False]
 
@@ -100,7 +101,7 @@ def yay(irc, hostmask, args):
 @irc.Handler("PRIVMSG", colon=False)
 def yay(irc, hostmask, args):
     channel = args[0]
-    if hostmask[0] == "LitBot" and "・゜゜・。。・゜゜\_o< QUACK!" == args[-1].strip():
+    if hostmask[0] == "LitBot" and "・゜゜・。。・゜゜\_o< QUACK!" == args[-1].strip() and ducks[0]:
         irc.msg(channel, "LitBot: bef")
         return
     elif hostmask[0] == haxxorname and defcon[0] == 2:
@@ -135,8 +136,19 @@ def yay(irc, hostmask, args):
             defcon[0] = 4
             irc.send("MODE", channel, "+bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
             irc.msg(channel, f"{hostmask[0]}: defcon 4 set: automatic kickban")
+        elif lat[0] == f"ducks":
+            if len(lat) < 2 or len(lat) > 2:
+                irc.msg(channel, f"{hostmask[0]}: usage: ducks (on | off)")
+            elif lat[1] == "on":
+                ducks[0] = True
+                irc.msg(channel, f"{hostmask[0]}: automatically befriending ducks")
+            elif lat[1] == "off":
+                ducks[0] = False
+                irc.msg(channel, f"{hostmask[0]}: NOT automatically befriending ducks")
+            else:
+                irc.msg(channel, f"{hostmask[0]}: usage: ducks (on | off)")
         else:
-            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban)")
+            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban | ducks)")
     elif args[-1].startswith(f"{irc.current_nick}:") and hostmask[0] == haxxorname:
         irc.msg(channel, f"{hostmask[0]}: lmao u serious?")
     elif args[-1].startswith(f"{irc.current_nick}:"):
