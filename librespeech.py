@@ -122,7 +122,7 @@ def yay(irc, hostmask, args):
             irc.msg(channel, f"{hostmask[0]}: defcon 0 set: relax")
         elif lat[0] == f"noop":
             defcon[0] = 1
-            irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname, "$a:%s" % haxxorname)
+            irc.send("MODE", channel, "-bqo", "$a:%s" % haxxorname, "$a:%s" % haxxorname, haxxorname)
             irc.msg(channel, f"{hostmask[0]}: defcon 1 set: deny channel operator privileges")
         elif lat[0] == f"censor":
             defcon[0] = 2
