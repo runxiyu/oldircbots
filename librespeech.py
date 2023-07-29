@@ -30,7 +30,6 @@ assert miniirc.ver >= (1, 4, 0), "This bot requires miniirc >= v1.4.0."
 # Variables
 nick = "lbsp"
 haxxorname = "qeeg"
-badwords = ["balls", "cunt", "wordington", "kill yourself"]
 ident = nick
 realname = "Censorship"
 identity = None
@@ -67,6 +66,23 @@ def trans(s):
     if s == "+": return "-"
     if s == "-": return "+"
     return s
+def badword(action, badword):
+    msg = "failed to add/remove"
+    with open("bw.txt", mode='r+t') as bwfile:
+        if action == 1 and badword not in bwfile.read(): # add
+            print(badword, file=bwfile)
+            msg = "successfully added"
+        elif action == 0: # del
+            lines = bwfile.readlines()
+            bwfile.seek(0)
+            for line in lines:
+                if badword != line.strip("\n"):
+                    bwfile.write(line)
+            bwfile.truncate()
+            msg = "successfully removed"
+    bwfile.close() # needed?
+    return msg + " badword \"" + badword + "\""
+
 @irc.Handler("KICK", colon=False)
 def yay(irc, hostmask, args):
     channel = args[0]
@@ -104,14 +120,15 @@ def yay(irc, hostmask, args):
         irc.notice(hostmask[0], f"[{channel}] Welcome to the channel! Please keep an eye on {haxxorname} to make sure they don't do anything evil.")
 @irc.Handler("PRIVMSG", colon=False)
 def yay(irc, hostmask, args):
+    badwords = open("bw.txt").read().strip().split("\n")
     channel = args[0]
     if hostmask[0] == "LitBot" and "・゜゜・。。・゜゜\_o< QUACK!" == args[-1].strip() and ducks[0]:
         irc.msg(channel, "LitBot: bef")
         return
     elif hostmask[0] == haxxorname and defcon[0] == 2:
         text = args[-1].lower().strip()
-        for each in badwords:
-            if ' ' + each + ' ' in text or text.startswith(each + " ") or text.endswith(" " + each) or text == each:
+        for each in badwords.lower():
+            if each in text or ' ' + each + ' ' in text or text.startswith(each + " ") or text.endswith(" " + each) or text == each:
                 irc.send("MODE", channel, "+q", "$a:%s" % haxxorname)
                 time.sleep(60)
                 irc.send("MODE", channel, "-q", "$a:%s" % haxxorname)
@@ -151,8 +168,22 @@ def yay(irc, hostmask, args):
                 irc.msg(channel, f"{hostmask[0]}: NOT automatically befriending ducks")
             else:
                 irc.msg(channel, f"{hostmask[0]}: usage: ducks (on | off)")
+        elif lat[0] == f"badword":
+            if lat[1] != "list" and len(lat) < 3 or len(lat) > 3:
+                irc.msg(channel, f"{hostmask[0]}: usage: badword (add | del | list) word")
+            elif lat[1] == "add":
+                action = 1
+            elif lat[1] == "del":
+                action = 0
+            elif lat[1] == "list":
+                badwords = open("bw.txt").read().strip().split("\n")
+                irc.msg(channel, f"{hostmask[0]}: list of badwords is {badwords}")
+            else:
+                irc.msg(channel, f"{hostmask[0]}: usage: badword (add | del | list) word")
+            if lat[1] == "add" or lat[1] == "del":
+                irc.msg(channel, f"{hostmask[0]}: " + badword(action, lat[2]))
         else:
-            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban | ducks)")
+            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban | ducks | badword)")
     elif args[-1].startswith(f"{irc.current_nick}:") and hostmask[0] == haxxorname:
         irc.msg(channel, f"{hostmask[0]}: lmao u serious?")
     elif args[-1].startswith(f"{irc.current_nick}:"):
