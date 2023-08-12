@@ -29,7 +29,7 @@ assert miniirc.ver >= (1, 4, 0), "This bot requires miniirc >= v1.4.0."
 
 # Variables
 nick = "lbsp"
-haxxorname = ["qeeg"]
+haxxorname = ["f_"]
 ident = nick
 realname = "Censorship"
 identity = None
@@ -96,11 +96,14 @@ def yay(irc, hostmask, args):
             channel
     )
     irc.send("JOIN", channel)
+    time.sleep(1)
+    irc.send("JOIN", channel)
     if not defcon[0]: return
     if hostmask[0] != haxxorname[0]:
         return
     irc.msg("ChanServ", "DEOP", channel, haxxorname[0])
     irc.send("KICK", channel, haxxorname[0], "retaliation")
+    irc.send("JOIN", channel)
 @irc.Handler("JOIN", colon=False)
 def yay(irc, hostmask, args):
     channel = args[0]
