@@ -212,7 +212,7 @@ def yay(irc, hostmask, args):
     )
 @irc.Handler("474", colon=False)
 def yay(irc, hostmask, args):
-    channel = args[0]
+    channel = args[1]
     if defcon[0]:
         irc.msg("ChanServ", "DEOP", channel, haxxorname[0])
     irc.msg(
