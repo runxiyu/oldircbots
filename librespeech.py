@@ -37,7 +37,7 @@ identity = None
 identity = open("ident").read().strip()
 debug = True
 channels = ["#librespeech"]
-owner = ["Harriet", "f_", "leah", "Noisytoot", "Cindy", "ggoes"]
+owner = ["Adeline", "f_", "leah", "Noisytoot", "Cindy", "ggoes"]
 defcon = [0]
 
 raiding = [False]
