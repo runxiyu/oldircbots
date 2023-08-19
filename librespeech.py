@@ -29,7 +29,7 @@ assert miniirc.ver >= (1, 4, 0), "This bot requires miniirc >= v1.4.0."
 
 # Variables
 nick = "lbsp"
-haxxorname = ["f_"]
+haxxorname = ["qeeg"]
 ident = nick
 realname = "Censorship"
 identity = None
@@ -37,8 +37,9 @@ identity = None
 identity = open("ident").read().strip()
 debug = True
 channels = ["#librespeech"]
-owner = ["Adeline", "Noisytoot"]
+owner = ["Lareina", "f_", "leah", "Noisytoot", "Cindy", "ggoes"]
 defcon = [0]
+ducks = [False]
 
 raiding = [False]
 
@@ -89,21 +90,17 @@ def yay(irc, hostmask, args):
     t = text.lower()
     if args[1] != irc.current_nick:
         return
-    irc.msg("ChanServ", "DEOP", channel, haxxorname[0])
     irc.msg(
             "ChanServ",
             "UNBAN",
             channel
     )
     irc.send("JOIN", channel)
-    time.sleep(1)
-    irc.send("JOIN", channel)
     if not defcon[0]: return
     if hostmask[0] != haxxorname[0]:
         return
     irc.msg("ChanServ", "DEOP", channel, haxxorname[0])
     irc.send("KICK", channel, haxxorname[0], "retaliation")
-    irc.send("JOIN", channel)
 @irc.Handler("JOIN", colon=False)
 def yay(irc, hostmask, args):
     channel = args[0]
@@ -125,7 +122,10 @@ def yay(irc, hostmask, args):
 def yay(irc, hostmask, args):
     badwords = open("bw.txt").read().strip().split("\n")
     channel = args[0]
-    if hostmask[0] == haxxorname and defcon[0] == 2:
+    if hostmask[0] == "LitBot" and "・゜゜・。。・゜゜\_o< QUACK!" == args[-1].strip() and ducks[0]:
+        irc.msg(channel, "LitBot: bef")
+        return
+    elif hostmask[0] == haxxorname[0] and defcon[0] == 2:
         text = args[-1].lower().strip()
         for each in badwords.lower():
             if each in text or ' ' + each + ' ' in text or text.startswith(each + " ") or text.endswith(" " + each) or text == each:
@@ -133,18 +133,10 @@ def yay(irc, hostmask, args):
                 time.sleep(60)
                 irc.send("MODE", channel, "-q", "$a:%s" % haxxorname[0])
                 return
-    elif args[-1].startswith(f"{irc.current_nick}:") and hostmask[0] == haxxorname[0]:
-        irc.msg(channel, f"{hostmask[0]}: no")
     elif hostmask[0] in owner and args[-1].startswith(f"{irc.current_nick}: "):
         lat = args[-1].split(" ")[1:]
         if lat[0] == f"quit":
             exit(0)
-        elif lat[0] == f"target":
-            if lat[1] == irc.current_nick:
-                irc.msg(channel, f"{hostmask[0]}: no")
-                return
-            haxxorname[0] = lat[1]
-            irc.msg(channel, f"{hostmask[0]}: set target to {haxxorname[0]}")
         elif lat[0] == f"off":
             defcon[0] = 0
             irc.send("MODE", channel, "-bq", "$a:%s" % haxxorname[0], "$a:%s" % haxxorname[0])
@@ -165,6 +157,17 @@ def yay(irc, hostmask, args):
             defcon[0] = 4
             irc.send("MODE", channel, "+bq", "$a:%s" % haxxorname[0], "$a:%s" % haxxorname[0])
             irc.msg(channel, f"{hostmask[0]}: defcon 4 set: automatic kickban")
+        elif lat[0] == f"ducks":
+            if len(lat) < 2 or len(lat) > 2:
+                irc.msg(channel, f"{hostmask[0]}: usage: ducks (on | off)")
+            elif lat[1] == "on":
+                ducks[0] = True
+                irc.msg(channel, f"{hostmask[0]}: automatically befriending ducks")
+            elif lat[1] == "off":
+                ducks[0] = False
+                irc.msg(channel, f"{hostmask[0]}: NOT automatically befriending ducks")
+            else:
+                irc.msg(channel, f"{hostmask[0]}: usage: ducks (on | off)")
         elif lat[0] == f"badword":
             if lat[1] != "list" and len(lat) < 3 or len(lat) > 3:
                 irc.msg(channel, f"{hostmask[0]}: usage: badword (add | del | list) word")
@@ -180,7 +183,9 @@ def yay(irc, hostmask, args):
             if lat[1] == "add" or lat[1] == "del":
                 irc.msg(channel, f"{hostmask[0]}: " + badword(action, lat[2]))
         else:
-            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban | ducks | badword | target)")
+            irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban | ducks | badword)")
+    elif args[-1].startswith(f"{irc.current_nick}:") and hostmask[0] == haxxorname[0]:
+        irc.msg(channel, f"{hostmask[0]}: lmao u serious?")
     elif args[-1].startswith(f"{irc.current_nick}:"):
         irc.msg(channel, f"{hostmask[0]}: unauthorized")
 
@@ -215,7 +220,7 @@ def yay(irc, hostmask, args):
     )
 @irc.Handler("474", colon=False)
 def yay(irc, hostmask, args):
-    channel = args[1]
+    channel = args[0]
     if defcon[0]:
         irc.msg("ChanServ", "DEOP", channel, haxxorname[0])
     irc.msg(
