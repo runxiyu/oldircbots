@@ -37,7 +37,7 @@ identity = None
 identity = open("ident").read().strip()
 debug = True
 channels = ["#librespeech"]
-owner = ["Adeline", "f_", "leah", "Noisytoot", "Cindy", "ggoes"]
+owner = ["Adeline", "Noisytoot"]
 defcon = [0]
 
 raiding = [False]
@@ -140,6 +140,9 @@ def yay(irc, hostmask, args):
         if lat[0] == f"quit":
             exit(0)
         elif lat[0] == f"target":
+            if lat[1] == irc.current_nick:
+                irc.msg(channel, f"{hostmask[0]}: no")
+                return
             haxxorname[0] = lat[1]
             irc.msg(channel, f"{hostmask[0]}: set target to {haxxorname[0]}")
         elif lat[0] == f"off":
