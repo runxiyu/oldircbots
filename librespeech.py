@@ -36,7 +36,7 @@ identity = None
 # identity = '<username> <password>'
 identity = open("ident").read().strip()
 debug = True
-channels = ["#librespeech"]
+channels = ["#librespeech", "##adeban"]
 owner = ["Adeline", "Noisytoot"]
 defcon = [1]
 
@@ -184,7 +184,7 @@ def yay(irc, hostmask, args):
         else:
             irc.msg(channel, f"{hostmask[0]}: usage: {irc.current_nick} (off | noop | censor | quiet | ban | ducks | badword | target)")
     elif args[-1].startswith(f"{irc.current_nick}:"):
-        irc.msg(channel, f"{hostmask[0]}: unauthorized")
+        irc.msg(channel, f"{hostmask[0]}: no")
 
 
 @irc.Handler("MODE", colon=False)
@@ -234,6 +234,7 @@ def yay(irc, hostmask, args):
         irc.msg("ChanServ", "DEOP", channel, haxxorname[0])
     time.sleep(3)
     irc.send("JOIN", channel)
+
 @irc.Handler("471", colon=False)
 def yay(irc, hostmask, args):
     channel = args[1]
