@@ -115,9 +115,11 @@ def yay(irc, hostmask, args):
         if defcon[0] == 1:
             irc.notice(haxxorname[0], f"[{channel}] You are not allowed to op up, change the topic, set modes, or do any similar thing in this channel.")
         if defcon[0] == 3:
-            irc.send("MODE", channel, "+q", "$a:%s" % haxxorname[0])
+            irc.send("MODE", channel, "+qq", "$a:%s" % haxxorname[0], "$j:##adeban")
+            irc.send("MODE", "##adeban", "+b", "$a:%s" % haxxorname[0])
         if defcon[0] >= 4:
-            irc.send("MODE", channel, "+b", "$a:%s" % haxxorname[0])
+            irc.send("MODE", channel, "+bb", "$a:%s" % haxxorname[0], "$j:##adeban")
+            irc.send("MODE", "##adeban", "+b", "$a:%s" % haxxorname[0])
             irc.send("KICK", channel, haxxorname[0], "You're banned!")
     else:
         irc.notice(hostmask[0], f"[{channel}] Welcome to the channel! Please keep an eye on {haxxorname[0]} to make sure they don't do anything evil.")
