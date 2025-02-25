@@ -7,9 +7,9 @@ import ssl
 
 names = []
 
-trusted = [b"Andrew", b"Noisytoot"]
+trusted = [b"runxiyu"]
 
-channel = b"#librespeech"
+channel = b"#funderscore-sucks"
 
 
 def init(name):
@@ -30,13 +30,13 @@ def run(name):
 
     s = context.wrap_socket(
         socket.socket(socket.AF_INET, socket.SOCK_STREAM),
-        server_hostname="irc.libera.chat",
+        server_hostname="irc.runxiyu.org",
     )
 
-    s.connect(("irc.libera.chat", 6697))
+    s.connect(("irc.runxiyu.org", 6697))
 
     s.sendall(
-        b"USER librespeech librespeech librespeech :librespeech\r\nNICK "
+        b"USER squishyface squishyface squishyface :squishyface\r\nNICK "
         + name
         + b"\r\n"
     )
@@ -244,9 +244,9 @@ def run(name):
 
 
 for i in range(0, 3):
-    print("Starting librespeech" + str(i) + "...")
+    print("Starting squishyface" + str(i) + "...")
     threading.Thread(
-        target=init, args=(b"librespeech" + str(i).encode("UTF-8"),)
+        target=init, args=(b"squishyface" + str(i).encode("UTF-8"),)
     ).start()
     time.sleep(3)
 

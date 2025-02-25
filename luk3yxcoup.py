@@ -10,9 +10,9 @@ from miniirc_extras import utils
 
 # Add their hostmask here
 trusted = {
-        "user/Lareina",
+        "eee", "222.70.233.26"
         }
-distrust = {"user/vitali64"}
+distrust = {"oper/netadmin"}
 
 hg = utils.HandlerGroup()
 
@@ -66,12 +66,19 @@ def _poll(irc, channel):
     to_op = []
     to_deop = []
     for user in chan.users:
+        if user.host == "???":
+            continue
         if user.nick in protected:
             continue
         if user.nick not in ops and (user.host in trusted):
+            print(user.nick, user.host, end=" ")
+            print("OP")
             to_op.append(user.nick)
-        elif (user.nick in distrust) and user.nick in ops:
+        elif (user.nick in ops) and (user.host not in trusted):
+            print(user.nick, user.host, end=" ")
+            print("DEOP")
             to_deop.append(user.nick)
+
 
     random.shuffle(to_op)
     random.shuffle(to_deop)
@@ -189,7 +196,7 @@ def make_many_ircs(amount, ip, port, nick, *args, start_from=0, **kwargs):
         irc.require("users")
         irc.require("chans")
         irc.connect()
-        time.sleep(5)
+        time.sleep(1)
     return res
 
 
@@ -214,7 +221,7 @@ def main():
     if args.username and args.password:
         ns_identity = (args.username, args.password)
     make_many_ircs(
-            args.amount or 2,
+            args.amount or 20,
             args.ip,
             args.port or 6697,
             args.nick,

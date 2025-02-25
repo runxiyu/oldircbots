@@ -29,7 +29,7 @@ assert miniirc.ver >= (1, 4, 0), "This bot requires miniirc >= v1.4.0."
 
 # Variables
 nick = "lbsp"
-haxxorname = ["f_"]
+haxxorname = ["fuel", "fuel_"]
 ident = nick
 realname = "Censorship"
 identity = None
@@ -37,7 +37,7 @@ identity = None
 identity = open("ident").read().strip()
 debug = True
 channels = ["#librespeech", "##adeban"]
-owner = ["Adeline", "Noisytoot"]
+owner = ["Adeline", "Noisytoot", "runxiyu", "rx", "leah", "ezntek"]
 defcon = [1]
 
 raiding = [False]
